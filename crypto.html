@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Wallet with Achievements</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #010b13;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .card {
+            background: #f0f8ff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        .card h2 {
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .achievement {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .achievement h3 {
+            margin-top: 0;
+        }
+        .reward {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="color:#FFCCCB ;">Krypto   <b style="color: red;"> X </b>  Wallet </h1>
+
+        <!-- Display Balance Card -->
+        <div class="card">
+            <h2>Current Balance</h2>
+            <table id="balanceTable">
+                <thead>
+                    <tr>
+                        <th>Cryptocurrency</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Example data; in a real application, this would be dynamic -->
+                    <tr>
+                        <td>Bitcoin (BTC)</td>
+                        <td id="btcBalance">0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Ethereum (ETH)</td>
+                        <td id="ethBalance">0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add Cryptocurrency Card -->
+        <div class="card">
+            <h2>Add Cryptocurrency</h2>
+            <form id="addForm">
+                <div class="form-group">
+                    <label for="cryptoName">Cryptocurrency Name</label>
+                    <input type="text" id="cryptoName" placeholder="Enter cryptocurrency name (e.g., BTC, ETH)" required>
+                </div>
+                <div class="form-group">
+                    <label for="cryptoAmount">Amount</label>
+                    <input type="number" id="cryptoAmount" step="any" placeholder="Enter amount" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Add</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Transfer Cryptocurrency Card -->
+        <div class="card">
+            <h2>Transfer Cryptocurrency</h2>
+            <form id="transferForm">
+                <div class="form-group">
+                    <label for="transferCrypto">Cryptocurrency</label>
+                    <select id="transferCrypto">
+                        <option value="BTC">Bitcoin (BTC)</option>
+                        <option value="ETH">Ethereum (ETH)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transferAmount">Amount</label>
+                    <input type="number" id="transferAmount" step="any" placeholder="Enter amount" required>
+                </div>
+                <div class="form-group">
+                    <label for="recipientAddress">Recipient Address</label>
+                    <input type="text" id="recipientAddress" placeholder="Enter recipient address" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Transfer</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Achievements Card -->
+        <div class="card achievement">
+            <h2>Achievements</h2>
+            <div id="achievementsList">
+                <!-- Achievements will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Example balance data
+        let balances = {
+            BTC: 0.00,
+            ETH: 0.00
+        };
+
+        // Example achievements
+        const achievements = [
+            { name: "First Transfer", description: "Make your first transfer", achieved: false },
+            { name: "100 BTC", description: "Hold 100 BTC", achieved: false },
+            { name: "Early Adopter", description: "Add cryptocurrency in the first week", achieved: false }
+        ];
+
+        // Update balance display
+        function updateBalance() {
+            document.getElementById('btcBalance').innerText = balances.BTC.toFixed(2);
+            document.getElementById('ethBalance').innerText = balances.ETH.toFixed(2);
+        }
+
+        // Check achievements
+        function checkAchievements() {
+            achievements.forEach((achievement) => {
+                if (achievement.name === "First Transfer" && localStorage.getItem('transferMade')) {
+                    achievement.achieved = true;
+                }
+                if (achievement.name === "100 BTC" && balances.BTC >= 100) {
+                    achievement.achieved = true;
+                }
+                if (achievement.name === "Early Adopter" && localStorage.getItem('cryptoAdded') === 'true') {
+                    achievement.achieved = true;
+                }
+            });
+            displayAchievements();
+        }
+
+        // Display achievements
+        function displayAchievements() {
+            const achievementsList = document.getElementById('achievementsList');
+            achievementsList.innerHTML = '';
+            achievements.forEach((achievement) => {
+                const achievementElement = document.createElement('div');
+                achievementElement.innerHTML = `<h3>${achievement.name}</h3><p>${achievement.description}</p>`;
+                if (achievement.achieved) {
+                    achievementElement.innerHTML += '<p class="reward">Achievement Unlocked!</p>';
+                }
+                achievementsList.appendChild(achievementElement);
+            });
+        }
+
+        // Handle add cryptocurrency form submission
+        document.getElementById('addForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('cryptoName').value.toUpperCase();
+            const amount = parseFloat(document.getElementById('cryptoAmount').value);
+
+            if (balances[name] !== undefined) {
+                balances[name] += amount;
+                updateBalance();
+                localStorage.setItem('cryptoAdded', 'true');
+                checkAchievements();
+            }
+
+            // Clear form
+            document.getElementById('cryptoName').value = '';
+            document.getElementById('cryptoAmount').value = '';
+        });
+
+        // Handle transfer cryptocurrency form submission
+        document.getElementById('transferForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const crypto = document.getElementById('transferCrypto').value;
+            const amount = parseFloat(document.getElementById('transferAmount').value);
+            const recipient = document.getElementById('recipientAddress').value;
+
+            if (balances[crypto] !== undefined && balances[crypto] >= amount) {
+                balances[crypto] -= amount;
+                updateBalance();
+                localStorage.setItem('transferMade', 'true');
+                checkAchievements();
+                alert(`Transferred ${amount} ${crypto} to ${recipient}`);
+            } else {
+                alert('Insufficient balance or invalid cryptocurrency');
+            }
+
+            // Clear form
+            document.getElementById('transferAmount').value = '';
+            document.getElementById('recipientAddress').value = '';
+        });
+
+        // Initial setup
+        updateBalance();
+        checkAchievements();
+    </script>
+</body>
+</html>
